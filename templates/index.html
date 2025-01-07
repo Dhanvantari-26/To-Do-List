@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Welcome to Your To-Do List</h1>
+            <div class="user-info">
+                <span>Logged in as: {{ session['user_email'] }}</span>
+                
+                <a href="/logout" class="logout-btn">Logout</a>
+            </div>
+        </header>
+
+        <div class="todo-form">
+            <form action="/add" method="POST">
+                <input type="text" name="item" placeholder="Add new item" required>
+                <button type="submit">Add Item</button>
+            </form>
+        </div>
+
+        <ul class="item-list">
+            {% for item in items %}
+            <li>
+                <form action="/edit/{{ item['_id'] }}" method="POST" class="edit-form">
+                    <div class="item-row">
+                        <span class="item-text">{{ loop.index }}. {{ item['task'] }}</span>
+                        <div class="item-buttons">
+                            <button type="button" class="edit-btn">✏️</button>
+                            <button type="submit" class="save-btn" style="display: none;">💾</button>
+                            <a href="/del/{{ item['_id'] }}" class="delete-btn">🗑️</a>
+                        </div>
+                    </div>
+                    <div class="edit-box" style="display: none;">
+                        <input type="text" name="new_name" value="{{ item['task'] }}" class="edit-input">
+                    </div>
+                </form>
+                
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script>
+        // JavaScript to toggle edit box visibility
+        document.querySelectorAll('.edit-btn').forEach(editBtn => {
+            editBtn.addEventListener('click', function (e) {
+                const form = e.target.closest('.edit-form');
+                const editBox = form.querySelector('.edit-box');
+                const saveBtn = form.querySelector('.save-btn');
+                const editBtn = form.querySelector('.edit-btn');
+
+                // Toggle visibility of the edit box
+                if (editBox.style.display === 'none') {
+                    editBox.style.display = 'block';
+                    saveBtn.style.display = 'inline';
+                    editBtn.style.display = 'none';
+                } else {
+                    editBox.style.display = 'none';
+                    saveBtn.style.display = 'none';
+                    editBtn.style.display = 'inline';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
